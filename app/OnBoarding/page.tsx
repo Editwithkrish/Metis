@@ -71,11 +71,11 @@ export default function OnBoarding() {
             <div className="w-full max-w-[480px] glass p-8 md:p-12 rounded-[40px] shadow-[0_32px_80px_-20px_rgba(92,124,250,0.15)] border-white/80 relative z-10 animate-in fade-in zoom-in-95 duration-700">
 
                 {/* Logo */}
-                <div className="flex flex-col items-center text-center mb-10">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5C7CFA] to-[#8ED1B2] flex items-center justify-center text-white shadow-lg shadow-[#5C7CFA]/20 mb-4">
+                <div className="flex flex-col items-center text-center mb-10 group cursor-default">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5C7CFA] to-[#A5C8FF] flex items-center justify-center text-white shadow-lg shadow-[#5C7CFA]/20 mb-4 group-hover:animate-wheel">
                         <Image src="/logo.svg" alt="Metis" width={28} height={28} />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Metis</h1>
+                    <h1 className="text-3xl font-normal text-slate-800 tracking-tight font-serif">Metis</h1>
                     <p className="text-slate-500 font-medium text-sm mt-2">
                         {isLogin ? "Welcome back to your motherhood journey." : "Start your journey into smart motherhood."}
                     </p>
@@ -164,7 +164,7 @@ export default function OnBoarding() {
                 {/* Footer Meta */}
                 <div className="mt-10 flex flex-col items-center gap-4 text-center">
                     <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        <ShieldCheck size={12} className="text-[#8ED1B2]" />
+                        <ShieldCheck size={12} className="text-[#5C7CFA]" />
                         HIPAA Compliant & Encrypted
                     </div>
                     <p className="text-[11px] text-slate-400 font-medium max-w-[280px]">

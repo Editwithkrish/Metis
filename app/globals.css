@@ -47,6 +47,17 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  --animate-wheel: wheel-accelerate 2s cubic-bezier(0.5, 0, 1, 1) forwards;
+
+  @keyframes wheel-accelerate {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(1440deg);
+    }
+  }
 }
 
 :root {
@@ -80,9 +91,8 @@
 
   /* Custom Metis Colors */
   --metis-blue: #5C7CFA;
-  --metis-teal: #8ED1B2;
-  --metis-yellow: #FFD98E;
   --metis-indigo: #A5C8FF;
+  --metis-yellow: #FFD98E;
   --metis-pastel: #F3F6FF;
 }
 
@@ -152,7 +162,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-primary;
+    @apply bg-background text-foreground font-sans;
   }
 
   button {

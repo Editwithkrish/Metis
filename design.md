@@ -68,8 +68,8 @@ All major UI containers must use the `.glass` utility.
 ## 5. Typography
 Metis uses a dual-font approach for a premium look.
 
-- **Primary (Serif)**: `Instrument Serif` - Used for the logo and high-level branding.
-- **Secondary (Sans)**: `Instrument Sans` - Used for all UI elements, labels, and dashboard data.
+- **Primary (Serif)**: `Instrument Serif` - Used for all major headlines (Hero, Section Titles). Pattern: Regular + Italic Serif.
+- **Secondary (Sans)**: `Instrument Sans` - Used for sub-headings, UI elements, navigation, and body text.
 
 ---
 
