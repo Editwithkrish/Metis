@@ -1,30 +1,17 @@
-import React from "react";
 import { DashboardHeader } from "@/components/dashboard/header";
-import { Card, CardContent } from "@/components/ui/card";
-
-import { Calendar } from "lucide-react";
+import { CalendarView } from "@/components/dashboard/calendar/calendar-view";
 
 export default function CalendarPage() {
     return (
-        <>
+        <div className="flex flex-col gap-8 h-[calc(100vh-120px)]">
             <DashboardHeader
-                title="Calendar"
-                subtitle="Your upcoming schedule"
+                title="Growth & Logs"
+                subtitle="Tracking Leo's health and milestones"
             />
 
-            <div className="flex-1 flex items-center justify-center min-h-[400px]">
-                <Card className="glass border-none shadow-xl p-12 text-center max-w-md">
-                    <CardContent className="pt-6">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
-                            <Calendar size={32} />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-900/80 mb-2">Calendar Coming Soon</h2>
-                        <p className="text-slate-500 font-medium">
-                            We're working on a beautiful interactive calendar to help you track baby's growth and appointments.
-                        </p>
-                    </CardContent>
-                </Card>
+            <div className="flex-1 min-h-0">
+                <CalendarView />
             </div>
-        </>
+        </div>
     );
 }
