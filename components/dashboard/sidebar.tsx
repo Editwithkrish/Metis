@@ -41,7 +41,7 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-20 md:w-24 flex flex-col items-center py-8 gap-10 border-r border-white/40 z-50 backdrop-blur-3xl bg-white/30">
+        <aside className="fixed left-0 top-0 h-screen w-20 md:w-24 flex flex-col items-center py-8 gap-10 border-r border-white/40 z-50 backdrop-blur-xl bg-white/30">
             <Link href="/dashboard" className="text-primary font-bold text-2xl tracking-tight font-primary hover:scale-110 transition-transform cursor-pointer mb-2">
                 Metis
             </Link>
