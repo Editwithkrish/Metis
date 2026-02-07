@@ -15,6 +15,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AddLogModal } from "./add-log-modal";
 
 interface BabyEvent {
     id: string;
@@ -36,6 +37,7 @@ const babyEvents: BabyEvent[] = [
 
 export function CalendarView() {
     const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1)); // Feb 2026
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const daysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay();
@@ -126,13 +128,18 @@ export function CalendarView() {
 
             {/* Right Column: Unified Event Logs Card */}
             <div className="lg:col-span-4 h-full">
-                <UnifiedLogsCard events={babyEvents} />
+                <UnifiedLogsCard events={babyEvents} onAddClick={() => setIsAddModalOpen(true)} />
             </div>
+
+            <AddLogModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+            />
         </div>
     );
 }
 
-function UnifiedLogsCard({ events }: { events: BabyEvent[] }) {
+function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddClick: () => void }) {
     const [view, setView] = useState<'upcoming' | 'recent'>('upcoming');
 
     const filteredEvents = events.filter(e =>
@@ -147,7 +154,12 @@ function UnifiedLogsCard({ events }: { events: BabyEvent[] }) {
                         {view === 'upcoming' ? <Clock size={18} className="text-primary" /> : <CheckCircle2 size={18} className="text-emerald-500" />}
                         Activity Logs
                     </h3>
-                    <Button size="sm" variant="ghost" className="text-xs font-bold text-primary hover:bg-primary/10 transition-colors cursor-pointer">
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs font-bold text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                        onClick={onAddClick}
+                    >
                         <Plus size={14} className="mr-1" /> Add New
                     </Button>
                 </div>
