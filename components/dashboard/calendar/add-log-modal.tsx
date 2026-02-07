@@ -35,7 +35,7 @@ export function AddLogModal({ isOpen, onClose }: AddLogModalProps) {
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent
                 showCloseButton
-                className="max-w-full md:max-w-[1000px] w-[calc(100%-2rem)] p-0 overflow-hidden border-none bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.12)] rounded-[32px] font-sans"
+                className="max-w-full md:max-w-[1000px] w-[calc(100%-2rem)] p-0 overflow-hidden border-none bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.12)] rounded-[32px] font-secondary"
             >
                 <style jsx global>{`
                     .no-scrollbar::-webkit-scrollbar {
@@ -55,7 +55,7 @@ export function AddLogModal({ isOpen, onClose }: AddLogModalProps) {
                         className="w-full md:w-[38%] relative flex flex-col items-center justify-between p-8 md:p-12 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50/40 transition-all duration-500 group overflow-hidden cursor-pointer hover:bg-slate-100/80"
                     >
                         <div className="space-y-3 text-center w-full relative z-10 transition-all duration-500">
-                            <h3 className="text-3xl font-light text-slate-900 tracking-tight leading-tight">Talk to Hestia</h3>
+                            <h3 className="text-4xl font-normal text-slate-900 tracking-tight leading-tight font-primary">Talk to Hestia</h3>
                             <p className="text-slate-500 text-xs leading-relaxed max-w-[240px] mx-auto italic font-medium opacity-80">
                                 {isVoiceEnabled ? '"Add a growth milestone: Leo started crawling today"' : "Click to wake up Hestia and start speaking"}
                             </p>
@@ -96,7 +96,7 @@ export function AddLogModal({ isOpen, onClose }: AddLogModalProps) {
                     <div className="flex-1 bg-white p-8 md:p-14 no-scrollbar relative flex flex-col justify-center">
                         <div className="max-w-[500px] mx-auto w-full">
                             <DialogHeader className="mb-10 text-left">
-                                <DialogTitle className="text-3xl font-light text-slate-900 tracking-tight leading-tight">Activity Log</DialogTitle>
+                                <DialogTitle className="text-4xl font-normal text-slate-900 tracking-tight leading-tight font-primary">Activity Log</DialogTitle>
                                 <DialogDescription className="text-slate-400 text-sm font-medium mt-1">Capture a new milestone or health record.</DialogDescription>
                             </DialogHeader>
 

@@ -57,14 +57,16 @@ export function CalendarView() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full font-secondary">
             {/* Left Column: Date Grid */}
             <div className="lg:col-span-8 space-y-6">
                 <Card className="glass border-none shadow-2xl p-6">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-2xl font-bold text-slate-900/80">{monthName} {year}</h3>
-                            <p className="text-slate-500 font-medium">Tracking Leo's first year</p>
+                            <h3 className="text-3xl font-medium text-slate-900/80 font-primary italic">
+                                {monthName} <span className="opacity-40">{year}</span>
+                            </h3>
+                            <p className="text-slate-500 font-medium text-xs mt-1">Tracking Leo's first year</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <button className="p-2 hover:bg-white/40 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 border border-white/20">
@@ -150,7 +152,7 @@ function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddCli
         <Card className="glass border-none shadow-xl flex flex-col h-full min-h-[600px]">
             <div className="p-6 border-b border-white/20 bg-white/20">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                    <h3 className="font-medium text-xl text-slate-800 flex items-center gap-2 font-primary">
                         {view === 'upcoming' ? <Clock size={18} className="text-primary" /> : <CheckCircle2 size={18} className="text-emerald-500" />}
                         Activity Logs
                     </h3>

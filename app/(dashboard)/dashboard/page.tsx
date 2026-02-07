@@ -44,7 +44,7 @@ export default function DashboardPage() {
             <DashboardHeader title="Dashboard" subtitle="Welcome back, Sarah" />
 
             {/* Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8 font-secondary">
 
                 {/* Left Column: Stats & Feeding */}
                 <div className="lg:col-span-8 flex flex-col gap-6">
@@ -53,8 +53,8 @@ export default function DashboardPage() {
                     <Card className="glass overflow-hidden border-none shadow-xl border border-white/60">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white/20">
                             <div>
-                                <CardTitle className="text-xl font-bold text-slate-800/90">Growth Track</CardTitle>
-                                <CardDescription className="text-slate-500 font-medium">Leo's weight progress over 6 months</CardDescription>
+                                <CardTitle className="text-3xl font-normal text-slate-800/90 font-primary">Growth Track</CardTitle>
+                                <CardDescription className="text-slate-500 font-medium text-xs mt-1">Leo's weight progress over 6 months</CardDescription>
                             </div>
                             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-3 py-1 text-sm font-semibold backdrop-blur-md">
                                 Normal Range
@@ -109,9 +109,9 @@ export default function DashboardPage() {
                             <CardHeader className="pb-2">
                                 <div className="flex items-center gap-2 mb-1">
                                     <Droplets className="text-indigo-400" size={20} />
-                                    <CardTitle className="text-lg font-semibold text-slate-800">Feeding Log</CardTitle>
+                                    <CardTitle className="text-2xl font-normal text-slate-800 font-primary">Feeding Log</CardTitle>
                                 </div>
-                                <CardDescription>Daily intake summary</CardDescription>
+                                <CardDescription className="text-xs">Daily intake summary</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="h-[180px] w-full mt-2">
@@ -160,9 +160,9 @@ export default function DashboardPage() {
                             <CardHeader className="pb-2">
                                 <div className="flex items-center gap-2 mb-1">
                                     <Activity className="text-metis-teal" size={20} />
-                                    <CardTitle className="text-lg font-semibold text-slate-800">Activity</CardTitle>
+                                    <CardTitle className="text-2xl font-normal text-slate-800 font-primary">Activity</CardTitle>
                                 </div>
-                                <CardDescription>Movement and sleep</CardDescription>
+                                <CardDescription className="text-xs">Movement and sleep</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4 py-2">
@@ -185,10 +185,10 @@ export default function DashboardPage() {
                     <Card className="bg-white/80 backdrop-blur-xl border-none shadow-xl border-l-4 border-l-metis-yellow">
                         <CardHeader className="pb-2">
                             <div className="flex items-center justify-between">
-                                <Badge className="bg-metis-yellow/20 text-yellow-700 hover:bg-metis-yellow/30 border-none px-2 rounded-md">
+                                <Badge className="bg-metis-yellow/20 text-yellow-800 hover:bg-metis-yellow/30 border-none px-2 rounded-md font-bold uppercase tracking-wider text-[10px]">
                                     Upcoming Vaccine
                                 </Badge>
-                                <span className="text-xs font-bold text-slate-400">In 4 days</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">In 4 days</span>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -197,8 +197,8 @@ export default function DashboardPage() {
                                     <Baby size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-slate-900">DPT Booster 1</h3>
-                                    <p className="text-sm text-slate-500 font-medium">6 Month Milestone Immunization</p>
+                                    <h3 className="text-xl font-normal text-slate-900 font-primary mb-0.5">DPT Booster 1</h3>
+                                    <p className="text-xs text-slate-500 font-medium">6 Month Milestone Immunization</p>
                                     <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-slate-600">
                                         <Calendar size={12} className="text-slate-400" />
                                         Feb 12, 2026 • 10:30 AM
@@ -214,9 +214,9 @@ export default function DashboardPage() {
                     {/* Appointment List */}
                     <Card className="glass flex-1 border-none shadow-lg">
                         <CardHeader>
-                            <CardTitle className="text-lg font-semibold flex items-center justify-between text-slate-800">
+                            <CardTitle className="text-2xl font-normal flex items-center justify-between text-slate-800 font-primary">
                                 Consultations
-                                <Button variant="ghost" size="sm" className="text-xs text-primary font-bold cursor-pointer">See all</Button>
+                                <Button variant="ghost" size="sm" className="text-xs text-primary font-bold cursor-pointer font-secondary">See all</Button>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
