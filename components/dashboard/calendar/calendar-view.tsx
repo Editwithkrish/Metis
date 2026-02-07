@@ -15,6 +15,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AddLogModal } from "./add-log-modal";
 
 interface BabyEvent {
     id: string;
@@ -36,6 +37,7 @@ const babyEvents: BabyEvent[] = [
 
 export function CalendarView() {
     const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1)); // Feb 2026
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const daysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay();
@@ -55,14 +57,16 @@ export function CalendarView() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full font-secondary">
             {/* Left Column: Date Grid */}
             <div className="lg:col-span-8 space-y-6">
                 <Card className="glass border-none shadow-2xl p-6">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-2xl font-bold text-slate-900/80">{monthName} {year}</h3>
-                            <p className="text-slate-500 font-medium">Tracking Leo's first year</p>
+                            <h3 className="text-3xl font-medium text-slate-900/80 font-primary italic">
+                                {monthName} <span className="opacity-40">{year}</span>
+                            </h3>
+                            <p className="text-slate-500 font-medium text-xs mt-1">Tracking Leo's first year</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <button className="p-2 hover:bg-white/40 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-slate-900 border border-white/20">
@@ -126,13 +130,18 @@ export function CalendarView() {
 
             {/* Right Column: Unified Event Logs Card */}
             <div className="lg:col-span-4 h-full">
-                <UnifiedLogsCard events={babyEvents} />
+                <UnifiedLogsCard events={babyEvents} onAddClick={() => setIsAddModalOpen(true)} />
             </div>
+
+            <AddLogModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+            />
         </div>
     );
 }
 
-function UnifiedLogsCard({ events }: { events: BabyEvent[] }) {
+function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddClick: () => void }) {
     const [view, setView] = useState<'upcoming' | 'recent'>('upcoming');
 
     const filteredEvents = events.filter(e =>
@@ -143,11 +152,16 @@ function UnifiedLogsCard({ events }: { events: BabyEvent[] }) {
         <Card className="glass border-none shadow-xl flex flex-col h-full min-h-[600px]">
             <div className="p-6 border-b border-white/20 bg-white/20">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                    <h3 className="font-medium text-xl text-slate-800 flex items-center gap-2 font-primary">
                         {view === 'upcoming' ? <Clock size={18} className="text-primary" /> : <CheckCircle2 size={18} className="text-emerald-500" />}
                         Activity Logs
                     </h3>
-                    <Button size="sm" variant="ghost" className="text-xs font-bold text-primary hover:bg-primary/10 transition-colors cursor-pointer">
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs font-bold text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                        onClick={onAddClick}
+                    >
                         <Plus size={14} className="mr-1" /> Add New
                     </Button>
                 </div>

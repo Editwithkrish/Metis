@@ -7,7 +7,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen metis-gradient flex text-slate-800 font-sans relative overflow-x-hidden">
+        <div className="min-h-screen metis-gradient flex text-slate-800 font-secondary relative overflow-x-hidden">
             {/* Sidebar Container */}
             <Sidebar />
 
