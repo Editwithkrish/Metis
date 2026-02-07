@@ -10,14 +10,18 @@ import {
     HelpCircle
 } from "lucide-react";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 interface NavItemProps {
     icon: React.ReactNode;
     active?: boolean;
+    href: string;
 }
 
-function NavItem({ icon, active = false }: NavItemProps) {
+function NavItem({ icon, active = false, href }: NavItemProps) {
     return (
-        <div className="relative w-full flex justify-center group">
+        <Link href={href} className="relative w-full flex justify-center group">
             {active && (
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-slate-900 rounded-r-full shadow-[2px_0_10px_rgba(15,23,42,0.1)] z-20" />
             )}
@@ -29,27 +33,29 @@ function NavItem({ icon, active = false }: NavItemProps) {
       `}>
                 {icon}
             </button>
-        </div>
+        </Link>
     );
 }
 
 export function Sidebar() {
+    const pathname = usePathname();
+
     return (
         <aside className="fixed left-0 top-0 h-screen w-20 md:w-24 flex flex-col items-center py-8 gap-10 border-r border-white/40 z-50 backdrop-blur-3xl bg-white/30">
-            <div className="text-primary font-bold text-2xl tracking-tight font-primary hover:scale-110 transition-transform cursor-pointer mb-2">
+            <Link href="/dashboard" className="text-primary font-bold text-2xl tracking-tight font-primary hover:scale-110 transition-transform cursor-pointer mb-2">
                 Metis
-            </div>
+            </Link>
 
             <nav className="flex flex-col gap-6 w-full">
-                <NavItem icon={<LayoutDashboard size={22} />} active />
-                <NavItem icon={<Calendar size={22} />} />
-                <NavItem icon={<MessageSquare size={22} />} />
-                <NavItem icon={<Stethoscope size={22} />} />
-                <NavItem icon={<BookOpen size={22} />} />
+                <NavItem icon={<LayoutDashboard size={22} />} href="/dashboard" active={pathname === "/dashboard"} />
+                <NavItem icon={<Calendar size={22} />} href="/calendar" active={pathname === "/calendar"} />
+                <NavItem icon={<MessageSquare size={22} />} href="/messages" active={pathname === "/messages"} />
+                <NavItem icon={<Stethoscope size={22} />} href="/specialists" active={pathname === "/specialists"} />
+                <NavItem icon={<BookOpen size={22} />} href="/records" active={pathname === "/records"} />
             </nav>
 
             <div className="mt-auto w-full flex justify-center">
-                <NavItem icon={<HelpCircle size={22} />} />
+                <NavItem icon={<HelpCircle size={22} />} href="/help" active={pathname === "/help"} />
             </div>
         </aside>
     );
