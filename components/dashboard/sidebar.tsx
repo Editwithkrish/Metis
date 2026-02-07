@@ -17,37 +17,39 @@ interface NavItemProps {
 
 function NavItem({ icon, active = false }: NavItemProps) {
     return (
-        <button className={`
-      relative p-3 rounded-2xl transition-all duration-300 group cursor-pointer
-      ${active
-                ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20"
-                : "text-slate-400 hover:bg-white/60 hover:text-slate-900 hover:shadow-md"}
-    `}>
-            {icon}
+        <div className="relative w-full flex justify-center group">
             {active && (
-                <span className="absolute -left-4 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-slate-900 rounded-r-full" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-slate-900 rounded-r-full shadow-[2px_0_10px_rgba(15,23,42,0.1)] z-20" />
             )}
-        </button>
+            <button className={`
+        relative p-3 rounded-2xl transition-all duration-300 cursor-pointer z-10
+        ${active
+                    ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-105"
+                    : "text-slate-400 hover:bg-white/80 hover:text-slate-900 hover:shadow-md hover:scale-105"}
+      `}>
+                {icon}
+            </button>
+        </div>
     );
 }
 
 export function Sidebar() {
     return (
-        <aside className="fixed left-0 top-0 h-screen w-24 md:w-32 flex flex-col items-center py-8 gap-10 border-r border-white/20 z-50 backdrop-blur-md bg-white/5">
-            <div className="text-primary font-bold text-2xl tracking-tight font-primary hover:scale-105 transition-transform cursor-pointer">
+        <aside className="fixed left-0 top-0 h-screen w-20 md:w-24 flex flex-col items-center py-8 gap-10 border-r border-white/40 z-50 backdrop-blur-3xl bg-white/30">
+            <div className="text-primary font-bold text-2xl tracking-tight font-primary hover:scale-110 transition-transform cursor-pointer mb-2">
                 Metis
             </div>
 
-            <nav className="flex flex-col gap-6">
-                <NavItem icon={<LayoutDashboard size={24} />} active />
-                <NavItem icon={<Calendar size={24} />} />
-                <NavItem icon={<MessageSquare size={24} />} />
-                <NavItem icon={<Stethoscope size={24} />} />
-                <NavItem icon={<BookOpen size={24} />} />
+            <nav className="flex flex-col gap-6 w-full">
+                <NavItem icon={<LayoutDashboard size={22} />} active />
+                <NavItem icon={<Calendar size={22} />} />
+                <NavItem icon={<MessageSquare size={22} />} />
+                <NavItem icon={<Stethoscope size={22} />} />
+                <NavItem icon={<BookOpen size={22} />} />
             </nav>
 
-            <div className="mt-auto">
-                <NavItem icon={<HelpCircle size={24} />} />
+            <div className="mt-auto w-full flex justify-center">
+                <NavItem icon={<HelpCircle size={22} />} />
             </div>
         </aside>
     );
