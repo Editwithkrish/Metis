@@ -39,16 +39,17 @@ The background is critical for the glass effect. It uses a combination of a fixe
 background: fixed linear-gradient(
   135deg,
   #E3F0FF 0%,
-  #F5F9FF 50%,
-  #FFFFFF 100%
+  #EDF5FF 50%,
+  #E1EEFF 100%
 );
 ```
 
 ### Decorative Blobs
-Place these behind the main content (z-index 0). Use strictly cool blue tones to avoid pinkish or purple interference.
-- **Top Left**: `#C6DFFF/30` (blur 140px)
-- **Bottom Right**: `#DCE6FF/25` (blur 120px)
-- **Top Right**: `#E8F1FF/30` (blur 100px)
+Place these behind the main content (z-index 0). Use strictly cool blue tones to avoid pinkish or white voids.
+- **Top Left**: `#BBDDFF/25` (blur 140px)
+- **Bottom Right**: `#C6DFFF/30` (blur 120px)
+- **Top Right**: `#DCE6FF/25` (blur 110px)
+- **Bottom Left**: `#D0E1FF/20` (blur 90px)
 
 ---
 

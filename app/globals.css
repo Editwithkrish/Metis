@@ -141,8 +141,8 @@
   .metis-gradient {
     background: fixed linear-gradient(135deg,
         #E3F0FF 0%,
-        #F5F9FF 50%,
-        #FFFFFF 100%);
+        #EDF5FF 50%,
+        #E1EEFF 100%);
   }
 }
 
