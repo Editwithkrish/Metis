@@ -129,8 +129,8 @@
         rgba(255, 255, 255, 0.4) 0%,
         rgba(255, 255, 255, 0.1) 40%,
         rgba(255, 255, 255, 0) 100%);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
     border: 1.5px solid rgba(255, 255, 255, 0.8);
     box-shadow:
       0 4px 30px rgba(0, 0, 0, 0.03),
@@ -142,17 +142,38 @@
         rgba(0, 0, 0, 0.4) 0%,
         rgba(0, 0, 0, 0.1) 40%,
         rgba(0, 0, 0, 0) 100%);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.4);
   }
 
   .metis-gradient {
     background: fixed linear-gradient(135deg,
-        #E3F0FF 0%,
-        #EDF5FF 50%,
-        #E1EEFF 100%);
+        #D0E5FF 0%,
+        #F0F7FF 50%,
+        #C9E1FF 100%);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(4px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 23, 42, 0.2);
   }
 }
 
