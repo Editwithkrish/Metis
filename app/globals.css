@@ -145,6 +145,23 @@
         #C9E1FF 100%);
   }
 
+  @keyframes bar-grow {
+
+    0%,
+    100% {
+      transform: scaleY(0.3);
+    }
+
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .animate-bar-grow {
+    animation: bar-grow 0.8s ease-in-out infinite;
+    transform-origin: bottom;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
