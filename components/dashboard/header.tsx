@@ -1,6 +1,9 @@
-import React from "react";
-import { Search, Bell } from "lucide-react";
+"use client";
+
+import React, { useState } from "react";
+import { Search, Bell, Waves } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CryDetectionModal } from "./cry-detection/cry-detection-modal";
 
 interface DashboardHeaderProps {
     title: string;
@@ -8,8 +11,10 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
+    const [isCryModalOpen, setIsCryModalOpen] = useState(false);
+
     return (
-        <header className="grid grid-cols-3 items-center gap-4 h-16 w-full">
+        <header className="grid grid-cols-3 items-center gap-4 h-16 w-full relative z-[60]">
             {/* Title Section */}
             <div className="flex flex-col justify-center">
                 <h1 className="text-3xl font-normal tracking-tight text-slate-900/90 font-primary">
@@ -32,6 +37,16 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
 
             {/* Actions Section */}
             <div className="flex items-center gap-4 justify-self-end">
+                {/* Cry Detection Trigger */}
+                <button
+                    onClick={() => setIsCryModalOpen(true)}
+                    aria-label="Cry Detection"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all cursor-pointer group"
+                >
+                    <Waves size={18} className="group-hover:animate-pulse" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:block">Cry Decoder</span>
+                </button>
+
                 <button
                     aria-label="Notifications"
                     className="p-2.5 rounded-full bg-white/40 backdrop-blur-xl border border-white/60 text-slate-600 hover:bg-white/60 transition-colors relative cursor-pointer"
@@ -53,6 +68,11 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                     </div>
                 </div>
             </div>
+
+            <CryDetectionModal
+                isOpen={isCryModalOpen}
+                onClose={() => setIsCryModalOpen(false)}
+            />
         </header>
     );
 }
