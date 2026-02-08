@@ -6,7 +6,7 @@ import {
     Calendar,
     MessageSquare,
     Stethoscope,
-    BookOpen,
+    ShieldCheck,
     HelpCircle
 } from "lucide-react";
 
@@ -26,7 +26,7 @@ function NavItem({ icon, active = false, href }: NavItemProps) {
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-slate-900 rounded-r-full shadow-[2px_0_10px_rgba(15,23,42,0.1)] z-20" />
             )}
             <button className={`
-        relative p-3 rounded-2xl transition-all duration-300 cursor-pointer z-10
+        relative p-3 rounded-[10px] transition-all duration-300 cursor-pointer z-10
         ${active
                     ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-105"
                     : "text-slate-400 hover:bg-white/80 hover:text-slate-900 hover:shadow-md hover:scale-105"}
@@ -49,9 +49,9 @@ export function Sidebar() {
             <nav className="flex flex-col gap-6 w-full">
                 <NavItem icon={<LayoutDashboard size={22} />} href="/dashboard" active={pathname === "/dashboard"} />
                 <NavItem icon={<Calendar size={22} />} href="/calendar" active={pathname === "/calendar"} />
+                <NavItem icon={<ShieldCheck size={22} />} href="/vault" active={pathname === "/vault"} />
                 <NavItem icon={<MessageSquare size={22} />} href="/messages" active={pathname === "/messages"} />
                 <NavItem icon={<Stethoscope size={22} />} href="/specialists" active={pathname === "/specialists"} />
-                <NavItem icon={<BookOpen size={22} />} href="/records" active={pathname === "/records"} />
             </nav>
 
             <div className="mt-auto w-full flex justify-center">
