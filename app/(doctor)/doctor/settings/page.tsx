@@ -84,7 +84,7 @@ export default function SettingsPage() {
 function SettingNavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
     return (
         <div className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all ${active ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-white hover:text-slate-800'}`}>
-            <span className={active ? 'text-white' : 'text-slate-400'}>{React.cloneElement(icon as React.ReactElement, { size: 18 })}</span>
+            <span className={active ? 'text-white' : 'text-slate-400'}>{React.cloneElement(icon as React.ReactElement<{ size: number }>, { size: 18 })}</span>
             <span className="text-sm font-bold truncate">{label}</span>
         </div>
     );
