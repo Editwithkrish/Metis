@@ -29,7 +29,8 @@ import {
     differenceInWeeks,
     differenceInMonths,
     differenceInYears,
-    parseISO
+    parseISO,
+    addWeeks
 } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -155,6 +156,37 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
                 });
 
             if (error) throw error;
+
+            // 2. Prepare all vaccinations for the activity_log
+            const dob = parseISO(formData.dob);
+            const allActivityLogs: any[] = [];
+
+            VACCINATION_SCHEDULE.forEach(period => {
+                const scheduledDate = addWeeks(dob, period.minAgeWeeks);
+
+                period.vaccines.forEach(v => {
+                    const isCompleted = formData.vaccinations.includes(v);
+                    allActivityLogs.push({
+                        profile_id: user.id,
+                        activity_name: v,
+                        category: 'vaccination',
+                        status: isCompleted ? 'completed' : 'pending',
+                        scheduled_date: scheduledDate.toISOString().split('T')[0],
+                        completed_date: isCompleted ? new Date().toISOString().split('T')[0] : null,
+                        notes: isCompleted ? 'Marked as completed during onboarding' : 'Scheduled based on birth date'
+                    });
+                });
+            });
+
+            // 3. Batch insert into activity_log
+            const { error: logError } = await supabase
+                .from('activity_log')
+                .insert(allActivityLogs);
+
+            if (logError) {
+                console.error("Failed to seed activity log:", logError);
+                // We don't throw here to avoid blocking completion, but we log it
+            }
 
             // Clear localStorage on success
             localStorage.removeItem("metis_onboarding_data");
