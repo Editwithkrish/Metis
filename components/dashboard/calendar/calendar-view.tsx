@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     ChevronLeft,
     ChevronRight,
@@ -14,11 +14,20 @@ import {
     Loader2,
     Image as ImageIcon
 } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AddLogModal } from "./add-log-modal";
 import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
 
 interface BabyEvent {
     id: string;
@@ -34,6 +43,7 @@ export function CalendarView() {
     const supabase = createClient();
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [selectedDayInfo, setSelectedDayInfo] = useState<{ day: number, events: BabyEvent[] } | null>(null);
     const [events, setEvents] = useState<BabyEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -91,6 +101,36 @@ export function CalendarView() {
         return events.filter(e => e.date === dateStr);
     };
 
+    const toggleEventStatus = useCallback(async (eventId: string) => {
+        // Optimistically update UI
+        setEvents(prev => prev.map(e =>
+            e.id === eventId ? { ...e, status: e.status === 'pending' ? 'completed' : 'pending' } : e
+        ));
+
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const targetEvent = events.find(e => e.id === eventId);
+            const newStatus = targetEvent?.status === 'pending' ? 'completed' : 'pending';
+
+            const { error } = await supabase
+                .from('activity_log')
+                .update({
+                    status: newStatus,
+                    completed_date: newStatus === 'completed' ? new Date().toISOString().split('T')[0] : null
+                })
+                .eq('id', eventId);
+
+            if (error) throw error;
+        } catch (error) {
+            console.error("Error updating event status:", error);
+            // Revert on error
+            fetchEvents();
+            toast.error("Failed to update status. Please try again.");
+        }
+    }, [events, supabase, fetchEvents]);
+
     const handlePrevMonth = () => {
         setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
     };
@@ -146,11 +186,16 @@ export function CalendarView() {
                             const dayWithImage = dayEvents.find(e => e.image_url);
 
                             return (
-                                <div key={day} className={`
-                                    p-2 border-r border-b border-slate-200/50 relative transition-all min-h-[100px] group overflow-hidden
-                                    ${isToday ? 'bg-primary/5' : 'bg-white/10'}
-                                    ${isBooked ? 'bg-white/20' : ''}
-                                `}>
+                                <div
+                                    key={day}
+                                    onClick={() => setSelectedDayInfo({ day, events: dayEvents })}
+                                    className={`
+                                        p-2 border-r border-b border-slate-200/50 relative transition-all min-h-[100px] group overflow-hidden cursor-pointer
+                                        ${isToday ? 'bg-primary/5' : 'bg-white/10'}
+                                        ${isBooked ? 'bg-white/20' : ''}
+                                        hover:shadow-[inset_0_0_0_2px_rgba(var(--primary),0.1)]
+                                    `}
+                                >
                                     {/* Image Background */}
                                     {dayWithImage && (
                                         <div className="absolute inset-0 z-0">
@@ -204,7 +249,11 @@ export function CalendarView() {
                         <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-4">Syncing Records...</p>
                     </Card>
                 ) : (
-                    <UnifiedLogsCard events={events} onAddClick={() => setIsAddModalOpen(true)} />
+                    <UnifiedLogsCard
+                        events={events}
+                        onAddClick={() => setIsAddModalOpen(true)}
+                        onToggleStatus={toggleEventStatus}
+                    />
                 )}
             </div>
 
@@ -215,16 +264,28 @@ export function CalendarView() {
                     fetchEvents();
                 }}
             />
+
+            {selectedDayInfo && (
+                <DayDetailsModal
+                    isOpen={!!selectedDayInfo}
+                    onClose={() => setSelectedDayInfo(null)}
+                    day={selectedDayInfo.day}
+                    month={monthName}
+                    year={year}
+                    events={selectedDayInfo.events}
+                    onToggleStatus={toggleEventStatus}
+                />
+            )}
         </div>
     );
 }
 
-function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddClick: () => void }) {
+function UnifiedLogsCard({ events, onAddClick, onToggleStatus }: { events: BabyEvent[], onAddClick: () => void, onToggleStatus: (id: string) => void }) {
     const [view, setView] = useState<'upcoming' | 'recent'>('upcoming');
 
-    const filteredEvents = events.filter(e =>
+    const filteredEvents = useMemo(() => events.filter((e: BabyEvent) =>
         view === 'upcoming' ? e.status === 'pending' : e.status === 'completed'
-    );
+    ), [events, view]);
 
     return (
         <Card className="glass border-none shadow-xl flex flex-col h-full overflow-hidden">
@@ -260,7 +321,7 @@ function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddCli
                 </div>
             </div>
 
-            <div className="p-4 space-y-3 overflow-y-auto flex-1 custom-scrollbar min-h-0 bg-white/5">
+            <div className="p-4 space-y-3 overflow-y-auto flex-1 custom-scrollbar min-h-0 bg-white/10 scroll-smooth">
                 {filteredEvents.length > 0 ? (
                     filteredEvents.map(event => (
                         <EventCard
@@ -268,11 +329,12 @@ function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddCli
                             event={event}
                             dimmed={view === 'recent'}
                             showCheck={view === 'upcoming'}
+                            onToggle={() => onToggleStatus(event.id)}
                         />
                     ))
                 ) : (
                     <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-40">
-                        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200">
                             <CalendarIcon size={24} className="text-slate-400" />
                         </div>
                         <p className="font-bold text-[10px] uppercase tracking-widest text-slate-500">No {view} events found</p>
@@ -283,7 +345,7 @@ function UnifiedLogsCard({ events, onAddClick }: { events: BabyEvent[], onAddCli
     );
 }
 
-function EventCard({ event, dimmed, showCheck }: { event: BabyEvent, dimmed?: boolean, showCheck?: boolean }) {
+const EventCard = React.memo(({ event, dimmed, showCheck, onToggle }: { event: BabyEvent, dimmed?: boolean, showCheck?: boolean, onToggle: () => void }) => {
     const icons: Record<string, React.ReactNode> = {
         vaccination: <Syringe size={14} className="text-amber-500" />,
         checkup: <Stethoscope size={14} className="text-blue-500" />,
@@ -292,33 +354,33 @@ function EventCard({ event, dimmed, showCheck }: { event: BabyEvent, dimmed?: bo
     };
 
     return (
-        <div className={`p-4 rounded-2xl border border-white/40 bg-white/60 transition-all hover:bg-white/80 group cursor-pointer relative overflow-hidden shadow-sm ${dimmed ? 'opacity-70 grayscale-[0.2]' : 'hover:shadow-md hover:scale-[1.01]'}`}>
-            <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[repeating-linear-gradient(-45deg,transparent,transparent_15px,#000_15px,#000_16px)]"></div>
-
+        <div className={`p-4 rounded-2xl border border-white/40 bg-white transition-opacity duration-300 group cursor-pointer relative overflow-hidden shadow-sm ${dimmed ? 'opacity-60 grayscale-[0.4]' : 'hover:shadow-md'}`}>
             <div className="flex items-center gap-3 relative z-10">
                 {showCheck && (
                     <button
-                        className="w-5 h-5 rounded-full border-1.5 border-slate-200 flex items-center justify-center text-transparent hover:text-emerald-500 hover:border-emerald-500 transition-all cursor-pointer bg-white/50 shrink-0"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggle();
+                        }}
+                        className="w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center text-transparent hover:text-emerald-500 hover:border-emerald-500 transition-all cursor-pointer bg-white shrink-0"
                         title="Mark as done"
                     >
                         <CheckCircle2 size={12} className="group-hover:text-emerald-500" />
                     </button>
                 )}
 
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${dimmed ? 'bg-slate-100' : 'bg-white shadow-sm border border-slate-50'}`}>
-                    {icons[event.category] || icons.manual}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${dimmed ? 'bg-slate-100' : 'bg-slate-50 border border-slate-100'}`}>
+                    {event.image_url ? (
+                        <img src={event.image_url} alt="" className="w-full h-full object-cover transform transition-transform group-hover:scale-110" loading="lazy" />
+                    ) : (
+                        icons[event.category] || icons.manual
+                    )}
                 </div>
 
                 <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-slate-800 text-xs truncate">{event.activity_name}</h4>
                     <p className="text-slate-400 text-[10px] mt-0.5 font-bold uppercase tracking-tight">{event.date}</p>
                 </div>
-
-                {event.image_url && (
-                    <div className="w-8 h-8 rounded-lg overflow-hidden border border-white shadow-sm shrink-0">
-                        <img src={event.image_url} alt="Log" className="w-full h-full object-cover" />
-                    </div>
-                )}
             </div>
 
             {event.notes && (
@@ -330,4 +392,104 @@ function EventCard({ event, dimmed, showCheck }: { event: BabyEvent, dimmed?: bo
             )}
         </div>
     );
-}
+});
+
+const DayDetailsModal = ({
+    isOpen,
+    onClose,
+    day,
+    month,
+    year,
+    events,
+    onToggleStatus
+}: {
+    isOpen: boolean,
+    onClose: () => void,
+    day: number,
+    month: string,
+    year: number,
+    events: BabyEvent[],
+    onToggleStatus: (id: string) => void
+}) => {
+    const dayWithImage = events.find(e => e.image_url);
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="max-w-full md:max-w-[1000px] w-[calc(100%-2rem)] p-0 overflow-hidden border-none bg-white rounded-[32px] shadow-2xl font-secondary">
+                <VisuallyHidden>
+                    <DialogTitle>Details for {month} {day}, {year}</DialogTitle>
+                    <DialogDescription>View activities and memories for this specific date.</DialogDescription>
+                </VisuallyHidden>
+                <div className="flex flex-col md:flex-row md:h-[600px]">
+                    {/* Left: Day Media (Image or Date Display) */}
+                    <div className="w-full md:w-[38%] relative bg-slate-900 overflow-hidden min-h-[300px] md:min-h-0">
+                        {dayWithImage ? (
+                            <>
+                                <img
+                                    src={dayWithImage.image_url}
+                                    alt={`Memories from ${month} ${day}`}
+                                    className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            </>
+                        ) : (
+                            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+                                <div className="text-center">
+                                    <CalendarIcon size={64} className="text-slate-100 mx-auto mb-4" />
+                                    <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">No photos captured</p>
+                                </div>
+                            </div>
+                        )}
+                        <div className="absolute bottom-12 left-12 z-10">
+                            <h2 className="text-8xl font-normal text-white font-primary italic leading-none drop-shadow-2xl">{day}</h2>
+                            <p className="text-white/60 text-xl font-medium tracking-tight mt-4 uppercase tracking-[0.1em]">{month} {year}</p>
+                        </div>
+                    </div>
+
+                    {/* Right: Day Activities */}
+                    <div className="flex-1 p-8 md:p-14 flex flex-col bg-white">
+                        <div className="flex items-center justify-between mb-10">
+                            <div className="space-y-1">
+                                <h3 className="text-3xl font-normal text-slate-900 font-primary">Day Activities</h3>
+                                <p className="text-slate-400 text-xs font-medium">Tracking Leo's growth and milestones.</p>
+                            </div>
+                            <Badge variant="outline" className="rounded-full border-slate-100 bg-slate-50/50 px-4 py-1.5 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
+                                {events.length} {events.length === 1 ? 'Entry' : 'Entries'}
+                            </Badge>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar min-h-0">
+                            {events.length > 0 ? (
+                                events.map(event => (
+                                    <EventCard
+                                        key={event.id}
+                                        event={event}
+                                        dimmed={event.status === 'completed'}
+                                        showCheck={event.status === 'pending'}
+                                        onToggle={() => onToggleStatus(event.id)}
+                                    />
+                                ))
+                            ) : (
+                                <div className="h-full flex flex-col items-center justify-center text-center opacity-30 py-20">
+                                    <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                                        <Plus className="text-slate-300" size={24} />
+                                    </div>
+                                    <p className="text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em]">No activities recorded</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-10 pt-8 border-t border-slate-100">
+                            <Button
+                                onClick={onClose}
+                                className="w-full h-14 rounded-2xl bg-slate-950 text-white font-bold text-xs uppercase tracking-[0.2em] hover:bg-slate-800 transition-all shadow-xl hover:translate-y-[-2px]"
+                            >
+                                Back to Calendar
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+};
