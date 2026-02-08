@@ -252,10 +252,10 @@ export default function LandingPage() {
                         </div>
 
                         <div className="flex items-center gap-6">
-                            <Link href="/OnBoarding" className={`hidden sm:block text-[12px] font-bold transition-colors duration-300 uppercase tracking-[0.1em] ${scrolled ? 'text-slate-500 hover:text-slate-900' : 'text-slate-600 hover:text-slate-900'}`}>
+                            <Link href="/onboarding" className={`hidden sm:block text-[12px] font-bold transition-colors duration-300 uppercase tracking-[0.1em] ${scrolled ? 'text-slate-500 hover:text-slate-900' : 'text-slate-600 hover:text-slate-900'}`}>
                                 Log in
                             </Link>
-                            <Link href="/OnBoarding" className={`px-6 transition-all duration-300 text-[12px] font-bold rounded-full shadow-lg shadow-[#5C7CFA]/10 flex items-center justify-center uppercase tracking-[0.1em]
+                            <Link href="/onboarding" className={`px-6 transition-all duration-300 text-[12px] font-bold rounded-full shadow-lg shadow-[#5C7CFA]/10 flex items-center justify-center uppercase tracking-[0.1em]
                                 ${scrolled
                                     ? 'h-9 bg-[#5C7CFA] text-white hover:bg-[#4A6CF7] hover:-translate-y-0.5'
                                     : 'h-10 bg-slate-900 text-white hover:bg-black hover:-translate-y-0.5'
@@ -284,7 +284,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-                        <Link href="/OnBoarding" className="h-14 px-10 bg-slate-900 hover:bg-black text-white rounded-full font-bold text-sm flex items-center justify-center gap-3 transition-all shadow-xl hover:-translate-y-1">
+                        <Link href="/onboarding" className="h-14 px-10 bg-slate-900 hover:bg-black text-white rounded-full font-bold text-sm flex items-center justify-center gap-3 transition-all shadow-xl hover:-translate-y-1">
                             Start Tracking Free
                             <ArrowRight size={18} />
                         </Link>

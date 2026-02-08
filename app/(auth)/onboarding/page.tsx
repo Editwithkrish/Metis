@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -12,6 +12,10 @@ import {
     ShieldCheck,
     Heart
 } from "lucide-react"
+
+import { createClient } from "@/utils/supabase/client"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 // Reusable components
 function AuthInput({
@@ -38,6 +42,7 @@ function AuthInput({
                 className="w-full h-14 pl-12 pr-4 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#5C7CFA]/20 focus:border-[#5C7CFA] transition-all font-sans text-slate-700 placeholder:text-slate-400 font-medium"
                 value={value}
                 onChange={onChange}
+                required
             />
         </div>
     )
@@ -48,6 +53,69 @@ export default function OnBoarding() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const supabase = createClient()
+    const router = useRouter()
+
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                router.push("/dashboard")
+                router.refresh()
+            }
+        })
+
+        return () => subscription.unsubscribe()
+    }, [supabase, router])
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true)
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback`,
+            },
+        })
+
+        if (error) {
+            toast.error(error.message)
+            setIsLoading(false)
+        }
+    }
+
+    const handleAuth = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setIsLoading(true)
+
+        try {
+            if (isLogin) {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                })
+                if (error) throw error
+                toast.success("Welcome back!")
+                router.push("/dashboard")
+            } else {
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name,
+                        },
+                        emailRedirectTo: `${window.location.origin}/auth/callback`,
+                    },
+                })
+                if (error) throw error
+                toast.success("Check your email to confirm your account!")
+            }
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     return (
         <main className="min-h-screen metis-gradient flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -71,7 +139,11 @@ export default function OnBoarding() {
 
                 {/* Google Auth First */}
                 <div className="space-y-4 mb-8">
-                    <button className="w-full h-14 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all shadow-sm hover:shadow-md active:scale-95">
+                    <button
+                        onClick={handleGoogleLogin}
+                        disabled={isLoading}
+                        className="w-full h-14 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all shadow-sm hover:shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -112,7 +184,7 @@ export default function OnBoarding() {
                 </div>
 
                 {/* Form */}
-                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-4" onSubmit={handleAuth}>
                     {!isLogin && (
                         <AuthInput
                             icon={Baby}
@@ -139,14 +211,21 @@ export default function OnBoarding() {
 
                     {isLogin && (
                         <div className="flex justify-end">
-                            <button className="text-xs font-bold text-[#5C7CFA] hover:text-[#4A6CF7] transition-colors">
+                            <button
+                                type="button"
+                                className="text-xs font-bold text-[#5C7CFA] hover:text-[#4A6CF7] transition-colors"
+                            >
                                 Forgot Password?
                             </button>
                         </div>
                     )}
 
-                    <button className="w-full h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all shadow-xl hover:-translate-y-1 mt-6">
-                        {isLogin ? "Sign In" : "Create Account"}
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all shadow-xl hover:-translate-y-1 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
                         <ArrowRight size={18} />
                     </button>
                 </form>
