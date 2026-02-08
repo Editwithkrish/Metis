@@ -7,7 +7,9 @@ import {
     MessageSquare,
     Stethoscope,
     ShieldCheck,
-    LogOut
+    LogOut,
+    Utensils,
+    Bell
 } from "lucide-react";
 
 import Link from "next/link";
@@ -75,6 +77,7 @@ export function Sidebar() {
                 <NavItem icon={<Calendar size={22} />} href="/calendar" active={pathname === "/calendar"} />
                 <NavItem icon={<ShieldCheck size={22} />} href="/vault" active={pathname === "/vault"} />
                 <NavItem icon={<Stethoscope size={22} />} href="/specialists" active={pathname === "/specialists"} />
+                <NavItem icon={<Utensils size={22} />} href="/nutrition" active={pathname === "/nutrition"} />
                 <NavItem icon={<MessageSquare size={22} />} href="/messages" active={pathname === "/messages"} />
             </nav>
 

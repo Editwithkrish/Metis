@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Search, Bell, Waves } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CryDetectionModal } from "./cry-detection/cry-detection-modal";
+import { NotificationPopover } from "./notification-popover";
 
 interface DashboardHeaderProps {
     title: string;
@@ -47,13 +48,7 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                     <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:block">Cry Decoder</span>
                 </button>
 
-                <button
-                    aria-label="Notifications"
-                    className="p-2.5 rounded-full bg-white/40 backdrop-blur-xl border border-white/60 text-slate-600 hover:bg-white/60 transition-colors relative cursor-pointer"
-                >
-                    <Bell size={20} />
-                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-400 rounded-full border-2 border-white"></span>
-                </button>
+                <NotificationPopover />
                 <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border-2 border-white/60 shadow-sm cursor-pointer hover:opacity-90 transition-opacity">
                         <AvatarImage
