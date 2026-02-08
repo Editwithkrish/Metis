@@ -47,6 +47,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
     });
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isOrbEnabled, setIsOrbEnabled] = useState(true);
     const supabase = createClient();
 
     // Load data from localStorage on mount
@@ -183,12 +184,25 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
 
                         {/* Animated Orb Component */}
                         <div className="flex-1 flex items-center justify-center w-full my-6 md:my-0">
-                            <div className="aspect-square w-[180px] lg:w-[220px] relative transition-transform duration-700 hover:scale-105">
-                                <Orb
-                                    agentState="thinking"
-                                    colors={["#1e40af", "#60a5fa"]}
-                                    className="w-full h-full"
-                                />
+                            <div className="relative group">
+                                <div
+                                    onClick={() => setIsOrbEnabled(!isOrbEnabled)}
+                                    className="aspect-square w-[180px] lg:w-[220px] relative transition-transform duration-700 hover:scale-105 cursor-pointer"
+                                >
+                                    <Orb
+                                        agentState="thinking"
+                                        colors={["#1e40af", "#60a5fa"]}
+                                        className="w-full h-full"
+                                        disabled={!isOrbEnabled}
+                                    />
+                                </div>
+
+                                {/* Custom Floating Hover Label */}
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap">
+                                    <div className="bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg border border-white/10">
+                                        Tap to {isOrbEnabled ? "disable" : "enable"}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

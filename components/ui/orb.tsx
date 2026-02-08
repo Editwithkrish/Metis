@@ -22,6 +22,7 @@ type OrbProps = {
   getOutputVolume?: () => number
   className?: string
   shimmerColor?: string
+  disabled?: boolean
 }
 
 export function Orb({
@@ -39,6 +40,7 @@ export function Orb({
   getOutputVolume,
   className,
   shimmerColor = "#e0f2fe", // Default to light bluish white
+  disabled = false,
 }: OrbProps) {
   return (
     <div className={className ?? "relative h-full w-full"}>
@@ -63,6 +65,7 @@ export function Orb({
           getInputVolume={getInputVolume}
           getOutputVolume={getOutputVolume}
           shimmerColor={shimmerColor}
+          disabled={disabled}
         />
       </Canvas>
     </div>
@@ -82,6 +85,7 @@ function Scene({
   getInputVolume,
   getOutputVolume,
   shimmerColor,
+  disabled,
 }: {
   colors: [string, string]
   colorsRef?: React.RefObject<[string, string]>
@@ -95,6 +99,7 @@ function Scene({
   getInputVolume?: () => number
   getOutputVolume?: () => number
   shimmerColor: string
+  disabled: boolean
 }) {
   const { gl } = useThree()
   const circleRef =
@@ -145,9 +150,14 @@ function Scene({
   )
 
   useEffect(() => {
-    targetColor1Ref.current = new THREE.Color(colors[0])
-    targetColor2Ref.current = new THREE.Color(colors[1])
-  }, [colors])
+    if (disabled) {
+      targetColor1Ref.current = new THREE.Color("#444444")
+      targetColor2Ref.current = new THREE.Color("#888888")
+    } else {
+      targetColor1Ref.current = new THREE.Color(colors[0])
+      targetColor2Ref.current = new THREE.Color(colors[1])
+    }
+  }, [colors, disabled])
 
   useEffect(() => {
     const apply = () => {
@@ -175,6 +185,13 @@ function Scene({
       if (live[1]) targetColor2Ref.current.set(live[1])
     }
     const u = mat.uniforms
+
+    if (disabled) {
+      u.uColor1.value.lerp(targetColor1Ref.current, 0.08)
+      u.uColor2.value.lerp(targetColor2Ref.current, 0.08)
+      return
+    }
+
     u.uTime.value += delta * 0.5
 
     if (u.uOpacity.value < 1) {
