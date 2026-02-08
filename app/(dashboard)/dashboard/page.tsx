@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DashboardHeader } from "@/components/dashboard/header";
 
+
 const weightData = [
     { month: "Jan", weight: 3.2 },
     { month: "Feb", weight: 4.1 },
