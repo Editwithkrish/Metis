@@ -50,8 +50,8 @@ export function Sidebar() {
                 <NavItem icon={<LayoutDashboard size={22} />} href="/dashboard" active={pathname === "/dashboard"} />
                 <NavItem icon={<Calendar size={22} />} href="/calendar" active={pathname === "/calendar"} />
                 <NavItem icon={<ShieldCheck size={22} />} href="/vault" active={pathname === "/vault"} />
-                <NavItem icon={<MessageSquare size={22} />} href="/messages" active={pathname === "/messages"} />
                 <NavItem icon={<Stethoscope size={22} />} href="/specialists" active={pathname === "/specialists"} />
+                <NavItem icon={<MessageSquare size={22} />} href="/messages" active={pathname === "/messages"} />
             </nav>
 
             <div className="mt-auto w-full flex justify-center">
