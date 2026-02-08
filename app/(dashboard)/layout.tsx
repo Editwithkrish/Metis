@@ -2,6 +2,7 @@ import React from "react";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { OnboardingWrapper } from "../../components/dashboard/onboarding-wrapper";
 
 export default async function DashboardLayout({
     children,
@@ -15,8 +16,18 @@ export default async function DashboardLayout({
         redirect("/onboarding");
     }
 
+    // Check if profile exists
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('onboarding_completed')
+        .eq('id', user.id)
+        .single();
+
+    const showOnboarding = !profile?.onboarding_completed;
+
     return (
         <div className="h-screen metis-gradient flex text-slate-800 font-secondary relative overflow-hidden">
+            <OnboardingWrapper initiallyOpen={showOnboarding} />
             {/* Sidebar Container */}
             <Sidebar />
 
