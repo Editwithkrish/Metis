@@ -25,13 +25,30 @@ import {
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import {
+    differenceInWeeks,
+    differenceInMonths,
+    differenceInYears,
+    parseISO
+} from "date-fns";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface OnboardingModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4 | 5;
+
+const VACCINATION_SCHEDULE = [
+    { id: 'birth', label: 'At Birth', minAgeWeeks: 0, vaccines: ['BCG', 'OPV-0', 'Hepatitis B birth dose'] },
+    { id: '6weeks', label: '6 Weeks', minAgeWeeks: 6, vaccines: ['OPV-1', 'Pentavalent-1 (DPT+HepB+Hib)', 'RVV-1', 'fIPV-1', 'PCV-1*'] },
+    { id: '10weeks', label: '10 Weeks', minAgeWeeks: 10, vaccines: ['OPV-2', 'Pentavalent-2', 'RVV-2'] },
+    { id: '14weeks', label: '14 Weeks', minAgeWeeks: 14, vaccines: ['OPV-3', 'Pentavalent-3', 'fIPV-2', 'RVV-3', 'PCV-2*'] },
+    { id: '9-12months', label: '9-12 Months', minAgeWeeks: 39, vaccines: ['MR-1 (Measles-Rubella)', 'JE-1*', 'PCV-Booster', 'Vitamin A (1st dose)'] },
+    { id: '16-24 months', label: '16-24 Months', minAgeWeeks: 69, vaccines: ['MR-2', 'JE-2**', 'DPT Booster-1', 'OPV Booster', 'Vitamin A (2nd dose)'] },
+    { id: '5-6years', label: '5-6 Years', minAgeWeeks: 260, vaccines: ['DPT Booster-2'] },
+];
 
 export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
     const [step, setStep] = useState<Step>(1);
@@ -43,6 +60,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
         weightUnit: "kg",
         height: "",
         heightUnit: "cm",
+        vaccinations: [] as string[],
         conditions: ""
     });
 
@@ -65,7 +83,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
 
         if (savedStep) {
             const stepNum = parseInt(savedStep);
-            if (stepNum >= 1 && stepNum <= 4) {
+            if (stepNum >= 1 && stepNum <= 5) {
                 setStep(stepNum as Step);
             }
         }
@@ -79,7 +97,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
 
     const nextStep = () => {
         if (isStepValid()) {
-            setStep((prev) => (prev < 4 ? (prev + 1) as Step : prev));
+            setStep((prev) => (prev < 5 ? (prev + 1) as Step : prev));
         } else {
             toast.error("Please fill in all fields to continue");
         }
@@ -95,10 +113,22 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
             case 3:
                 return formData.weight !== "" && formData.height !== "";
             case 4:
+                return true; // Vaccinations are optional to check
+            case 5:
                 return true; // Optional field
             default:
                 return false;
         }
+    };
+
+    const getBabyAgeInWeeks = () => {
+        if (!formData.dob) return 0;
+        return differenceInWeeks(new Date(), parseISO(formData.dob));
+    };
+
+    const getAvailableVaccines = () => {
+        const ageInWeeks = getBabyAgeInWeeks();
+        return VACCINATION_SCHEDULE.filter(period => ageInWeeks >= period.minAgeWeeks);
     };
 
     const handleComplete = async () => {
@@ -119,6 +149,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
                     weight_unit: formData.weightUnit,
                     initial_height: formData.height ? parseFloat(formData.height) : null,
                     height_unit: formData.heightUnit,
+                    completed_vaccinations: formData.vaccinations,
                     medical_conditions: formData.conditions,
                     onboarding_completed: true
                 });
@@ -147,7 +178,8 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
             case 1: return "Hello! I'm Hestia, your AI companion. Let's start by getting to know your little one. What's their name?";
             case 2: return `A beautiful name! And when did ${formData.babyName || 'the little one'} join the family?`;
             case 3: return "Great. Now, let's record some initial measurements for tracking growth trends.";
-            case 4: return "Almost there! Is there anything specific like allergies or conditions I should keep an eye on?";
+            case 4: return "Health preservation is key. Which of these standard vaccinations has your baby already received?";
+            case 5: return "Almost there! Is there anything specific like allergies or conditions I should keep an eye on?";
             default: return "";
         }
     };
@@ -208,14 +240,14 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
 
                         <div className="w-full flex flex-col items-center gap-4">
                             <div className="flex gap-2">
-                                {[1, 2, 3, 4].map((i) => (
+                                {[1, 2, 3, 4, 5].map((i) => (
                                     <div
                                         key={i}
                                         className={`h-1.5 rounded-full transition-all duration-500 ${step === i ? 'w-8 bg-slate-900' : 'w-2 bg-slate-200'}`}
                                     />
                                 ))}
                             </div>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Step {step} of 4</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Step {step} of 5</p>
                         </div>
                     </div>
 
@@ -323,8 +355,53 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
                                 </div>
                             )}
 
-                            {/* Step 4: Final Questions */}
+                            {/* Step 4: Vaccinations */}
                             {step === 4 && (
+                                <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 flex flex-col h-full max-h-[480px]">
+                                    <div className="space-y-2 shrink-0">
+                                        <h2 className="text-4xl font-normal text-slate-900 tracking-tight leading-tight font-primary">Vaccinations</h2>
+                                        <p className="text-slate-400 text-sm font-medium">Select the doses already administered.</p>
+                                    </div>
+                                    <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                                        {getAvailableVaccines().length > 0 ? (
+                                            getAvailableVaccines().map((period) => (
+                                                <div key={period.id} className="space-y-3 pt-2 first:pt-0">
+                                                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{period.label}</h4>
+                                                    <div className="grid grid-cols-1 gap-2">
+                                                        {period.vaccines.map((v) => (
+                                                            <div
+                                                                key={v}
+                                                                onClick={() => {
+                                                                    const current = [...formData.vaccinations];
+                                                                    if (current.includes(v)) {
+                                                                        handleInputChange("vaccinations", current.filter(item => item !== v) as any);
+                                                                    } else {
+                                                                        handleInputChange("vaccinations", [...current, v] as any);
+                                                                    }
+                                                                }}
+                                                                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${formData.vaccinations.includes(v) ? 'bg-primary/5 border-primary/20' : 'bg-slate-50 border-slate-50 hover:border-slate-100'}`}
+                                                            >
+                                                                <Checkbox
+                                                                    checked={formData.vaccinations.includes(v)}
+                                                                    className="border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                                                />
+                                                                <span className={`text-sm font-medium ${formData.vaccinations.includes(v) ? 'text-primary' : 'text-slate-600'}`}>{v}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center py-8">
+                                                <p className="text-slate-400 text-sm">No vaccinations scheduled yet for this age.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Step 5: Final Questions */}
+                            {step === 5 && (
                                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                                     <div className="space-y-2">
                                         <h2 className="text-4xl font-normal text-slate-900 tracking-tight leading-tight font-primary">Final Details</h2>
@@ -355,12 +432,12 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
                                 )}
                                 <Button
                                     disabled={isLoading || !isStepValid()}
-                                    onClick={step === 4 ? handleComplete : nextStep}
+                                    onClick={step === 5 ? handleComplete : nextStep}
                                     className="h-14 flex-[2] rounded-2xl bg-slate-950 text-white hover:bg-slate-800 font-bold text-xs uppercase tracking-[0.3em] shadow-xl hover:translate-y-[-2px] transition-all gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         "Saving..."
-                                    ) : step === 4 ? (
+                                    ) : step === 5 ? (
                                         <>Complete Setup <Check size={16} /></>
                                     ) : (
                                         <>Next Step <ArrowRight size={16} /></>
