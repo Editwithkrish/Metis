@@ -288,10 +288,10 @@ export default function LandingPage() {
                             Start Tracking Free
                             <ArrowRight size={18} />
                         </Link>
-                        <button className="h-14 px-8 bg-white hover:bg-slate-50 text-slate-800 border border-slate-100 rounded-full font-bold text-sm flex items-center justify-center gap-3 transition-all shadow-sm hover:shadow-md">
+                        <Link href="/doctor" className="h-14 px-8 bg-white hover:bg-slate-50 text-slate-800 border border-slate-100 rounded-full font-bold text-sm flex items-center justify-center gap-3 transition-all shadow-sm hover:shadow-md">
                             <Stethoscope size={18} className="text-[#5C7CFA]" />
-                            Consult a Pediatrician
-                        </button>
+                            Doctor Portal
+                        </Link>
                     </div>
 
                     {/* --- Multi-State Interactive Preview --- */}
@@ -384,9 +384,9 @@ export default function LandingPage() {
                                     </div>
                                 ))}
                             </div>
-                            <button className="h-16 px-12 bg-[#5C7CFA] text-white rounded-full font-bold text-base hover:bg-[#4A6CF7] transition-all shadow-xl shadow-[#5C7CFA]/10">
+                            <Link href="/doctor" className="h-16 px-12 bg-[#5C7CFA] text-white rounded-full font-bold text-base hover:bg-[#4A6CF7] transition-all shadow-xl shadow-[#5C7CFA]/10 flex items-center justify-center">
                                 Apply as Partner Doctor
-                            </button>
+                            </Link>
                         </div>
                         <div className="relative">
                             <div className="absolute inset-0 bg-[#5C7CFA]/5 blur-[120px] rounded-full" />
