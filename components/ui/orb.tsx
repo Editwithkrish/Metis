@@ -186,6 +186,10 @@ function Scene({
     }
     const u = mat.uniforms
 
+    if (u.uOpacity.value < 1) {
+      u.uOpacity.value = Math.min(1, u.uOpacity.value + delta * 2)
+    }
+
     if (disabled) {
       u.uColor1.value.lerp(targetColor1Ref.current, 0.08)
       u.uColor2.value.lerp(targetColor2Ref.current, 0.08)
@@ -193,10 +197,6 @@ function Scene({
     }
 
     u.uTime.value += delta * 0.5
-
-    if (u.uOpacity.value < 1) {
-      u.uOpacity.value = Math.min(1, u.uOpacity.value + delta * 2)
-    }
 
     let targetIn = 0
     let targetOut = 0.3
