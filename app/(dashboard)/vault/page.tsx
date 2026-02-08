@@ -115,7 +115,7 @@ export default function VaultPage() {
                     </Button>
                     <Button
                         onClick={() => setIsUploadModalOpen(true)}
-                        className="h-12 px-8 rounded-2xl bg-primary text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 gap-2 flex-1 md:flex-none cursor-pointer"
+                        className="h-12 px-8 rounded-2xl bg-slate-900 text-white font-bold text-xs uppercase tracking-widest shadow-xl shadow-slate-200 gap-2 flex-1 md:flex-none cursor-pointer hover:bg-slate-800 transition-all active:scale-95"
                     >
                         <Plus size={18} /> Upload New
                     </Button>
