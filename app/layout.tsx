@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "Metis is an AI-powered mother & baby health app with growth tracking, vaccine reminders, cry detection, doctor chat, and secure medical record vault.",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +31,7 @@ export default function RootLayout({
         className={`${instrumentSerif.variable} ${instrumentSans.variable} antialiased`}
       >
         {children}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );
